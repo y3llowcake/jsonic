@@ -179,6 +179,19 @@ func (j Jsonic) MustAt(keys ...string) Jsonic {
 	panic(fmt.Errorf("invalid path"))
 }
 
+func (j Jsonic) Pretty() (string, error) {
+	b, err := json.MarshalIndent(j.i, "", "  ")
+	return string(b), err
+}
+
+func (j Jsonic) MustPretty() string {
+	if s, err := j.Pretty(); err == nil {
+		return s
+	} else {
+		panic(err)
+	}
+}
+
 /*
 func (j Jsonic) MarshalJSONToRawMessage() (*json.RawMessage, error) {
 	b, err := j.MarshalJSON()
@@ -221,51 +234,6 @@ func (jm Map) Jsonic() Jsonic {
 
 func (ja Array) Jsonic() Jsonic {
 	return NewJsonicInterface(ja)
-}
-
-func (j Jsonic) MapAt(keys ...string) (Map, bool) {
-	if v, ok := j.At(keys...); ok {
-		if t, ok := v.Map(); ok {
-			return t, true
-		}
-	}
-	return nil, false
-}
-
-func (j Jsonic) StringAt(keys ...string) (string, bool) {
-	if v, ok := j.At(keys...); ok {
-		if s, ok := v.String(); ok {
-			return s, true
-		}
-	}
-	return "", false
-}
-
-func (j Jsonic) NumberAt(keys ...string) (json.Number, bool) {
-	if v, ok := j.At(keys...); ok {
-		if n, ok := v.Number(); ok {
-			return n, true
-		}
-	}
-	return "0", false
-}
-
-func (j Jsonic) BoolAt(keys ...string) (bool, bool) {
-	if v, ok := j.At(keys...); ok {
-		if b, ok := v.Bool(); ok {
-			return b, true
-		}
-	}
-	return false, false
-}
-
-func (j Jsonic) ArrayAt(keys ...string) (Array, bool) {
-	if v, ok := j.At(keys...); ok {
-		if n, ok := v.Array(); ok {
-			return n, true
-		}
-	}
-	return nil, false
 }
 
 // Super useful for tests. TODO consider moving this into unsafe, or a testing
